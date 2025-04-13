@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Voice Reader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #141e30, #243b55);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      border-radius: 10px;
+      padding: 10px;
+      border: none;
+      resize: none;
+      font-size: 1rem;
+      background: rgba(255,255,255,0.15);
+      color: white;
+    }
+
+    select, button {
+      margin-top: 15px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    button:hover, select:hover {
+      transform: scale(1.05);
+    }
+
+    .buttons {
+      margin-top: 10px;
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 AI Voice Reader</h1>
+    <textarea id="text">Hello, I’m your AI. Choose a voice and press play!</textarea>
+    <br>
+    <select id="voiceSelect"></select>
+    <div class="buttons">
+      <button onclick="speakText()">🔊 Read</button>
+      <button onclick="stopSpeech()">🛑 Stop</button>
+    </div>
+  </div>
+
+  <script>
+    const voiceSelect = document.getElementById('voiceSelect');
+    let voices = [];
+    let utterance;
+
+    function populateVoices() {
+      voices = window.speechSynthesis.getVoices();
+      voiceSelect.innerHTML = '';
+
+      voices.forEach((voice, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `${voice.name} (${voice.lang}) ${voice.gender || ''}`;
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+
+    function speakText() {
+      const text = document.getElementById('text').value;
+      const selectedVoice = voices[voiceSelect.value];
+
+      utterance = new SpeechSynthesisUtterance(text);
+      utterance.voice = selectedVoice;
+      utterance.pitch = 1;
+      utterance.rate = 1;
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function stopSpeech() {
+      window.speechSynthesis.cancel();
+    }
+  </script>
+</body>
+</html>
